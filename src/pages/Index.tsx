@@ -1,4 +1,3 @@
-
 import { useState, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -17,6 +16,7 @@ import { useUpscaleImage } from "@/hooks/use-upscale-image";
 import FeatureShowcase from "@/components/FeatureShowcase";
 import FAQ from "@/components/FAQ";
 import BeforeAfterExamples from "@/components/BeforeAfterExamples";
+
 const Index = () => {
   const [originalImage, setOriginalImage] = useState<string | null>(null);
   const [processedImage, setProcessedImage] = useState<string | null>(null);
@@ -28,10 +28,12 @@ const Index = () => {
   const {
     upscaleImage
   } = useUpscaleImage();
+
   const handleImageUpload = (imageDataUrl: string) => {
     setOriginalImage(imageDataUrl);
     setProcessedImage(null);
   };
+
   const handleImageProcessing = async () => {
     if (!originalImage) {
       toast.error("Please upload an image first");
@@ -49,6 +51,7 @@ const Index = () => {
       setIsProcessing(false);
     }
   };
+
   const handleDownload = () => {
     if (!processedImage) return;
     const link = document.createElement("a");
@@ -59,10 +62,11 @@ const Index = () => {
     document.body.removeChild(link);
     toast.success("Image downloaded successfully!");
   };
+
   return <div className="flex flex-col min-h-screen bg-gradient-to-b from-slate-50 to-slate-100">
       <Header />
       
-      <main className="flex-1 container mx-auto px-20 py-8">
+      <main className="flex-1 container mx-auto px-30 py-8">
         <div className="text-center mb-12">
           <h1 className="text-4xl md:text-5xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-600 to-blue-500 mb-4 py-[10px]">
             AI Image Upscaler
@@ -111,4 +115,5 @@ const Index = () => {
       <Footer />
     </div>;
 };
+
 export default Index;

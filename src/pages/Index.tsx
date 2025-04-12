@@ -1,4 +1,5 @@
-import { useState, useRef } from "react";
+
+import { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Slider } from "@/components/ui/slider";
@@ -16,6 +17,18 @@ import { useUpscaleImage } from "@/hooks/use-upscale-image";
 import FeatureShowcase from "@/components/FeatureShowcase";
 import FAQ from "@/components/FAQ";
 import BeforeAfterExamples from "@/components/BeforeAfterExamples";
+import { Download, Trash2 } from "lucide-react";
+
+// Interface for tracking processed images
+interface ProcessedImageItem {
+  id: string;
+  originalImage: string;
+  processedImage: string;
+  timestamp: number;
+  fileSize: string;
+  enhancementType: string;
+  scale: number;
+}
 
 const Index = () => {
   const [originalImage, setOriginalImage] = useState<string | null>(null);
@@ -24,14 +37,44 @@ const Index = () => {
   const [scale, setScale] = useState(2);
   const [enhancementType, setEnhancementType] = useState<string>("default");
   const [apiKey, setApiKey] = useState<string>("RaBvFMcSwqcrgCYf0KSylVye2AY2");
+  const [processedImages, setProcessedImages] = useState<ProcessedImageItem[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const {
     upscaleImage
   } = useUpscaleImage();
 
+  // Load processed images from localStorage on component mount
+  useEffect(() => {
+    const savedImages = localStorage.getItem('processedImages');
+    if (savedImages) {
+      try {
+        setProcessedImages(JSON.parse(savedImages));
+      } catch (error) {
+        console.error('Error loading processed images:', error);
+      }
+    }
+  }, []);
+
+  // Save processed images to localStorage whenever the array changes
+  useEffect(() => {
+    localStorage.setItem('processedImages', JSON.stringify(processedImages));
+  }, [processedImages]);
+
   const handleImageUpload = (imageDataUrl: string) => {
     setOriginalImage(imageDataUrl);
     setProcessedImage(null);
+  };
+
+  // Calculate file size in KB or MB
+  const calculateFileSize = (dataUrl: string): string => {
+    // Rough estimation: every 4 chars in base64 represent 3 bytes
+    const base64 = dataUrl.split(',')[1];
+    const sizeInBytes = (base64.length * 3) / 4;
+    
+    if (sizeInBytes < 1024 * 1024) {
+      return `${Math.round(sizeInBytes / 1024)} KB`;
+    }
+    return `${(sizeInBytes / (1024 * 1024)).toFixed(2)} MB`;
   };
 
   const handleImageProcessing = async () => {
@@ -43,6 +86,19 @@ const Index = () => {
     try {
       const result = await upscaleImage(originalImage, scale, enhancementType, apiKey);
       setProcessedImage(result);
+      
+      // Add to processed images history
+      const newProcessedImage: ProcessedImageItem = {
+        id: Date.now().toString(),
+        originalImage,
+        processedImage: result,
+        timestamp: Date.now(),
+        fileSize: calculateFileSize(result),
+        enhancementType,
+        scale
+      };
+      
+      setProcessedImages(prev => [newProcessedImage, ...prev].slice(0, 10)); // Keep last 10 images
       toast.success("Image successfully upscaled!");
     } catch (error) {
       console.error("Error processing image:", error);
@@ -52,15 +108,20 @@ const Index = () => {
     }
   };
 
-  const handleDownload = () => {
-    if (!processedImage) return;
+  const handleDownload = (image: string, prefix: string = '') => {
+    if (!image) return;
     const link = document.createElement("a");
-    link.href = processedImage;
-    link.download = `upscaled-image-${new Date().getTime()}.png`;
+    link.href = image;
+    link.download = `${prefix}upscaled-image-${new Date().getTime()}.png`;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
     toast.success("Image downloaded successfully!");
+  };
+
+  const handleDeleteProcessedImage = (id: string) => {
+    setProcessedImages(prev => prev.filter(item => item.id !== id));
+    toast.success("Image removed from history");
   };
 
   return <div className="flex flex-col min-h-screen bg-gradient-to-b from-slate-50 to-slate-100">
@@ -91,7 +152,8 @@ const Index = () => {
               <TabsContent value="result" className="mt-0">
                 {processedImage ? <div className="flex flex-col items-center">
                     <ImageComparison originalImage={originalImage!} processedImage={processedImage} />
-                    <Button className="mt-6 bg-green-600 hover:bg-green-700 text-white py-2 px-8" onClick={handleDownload}>
+                    <Button className="mt-6 bg-green-600 hover:bg-green-700 text-white py-2 px-8" onClick={() => handleDownload(processedImage)}>
+                      <Download className="mr-2 h-4 w-4" />
                       Download Image
                     </Button>
                   </div> : <div className="text-center py-20">
@@ -106,6 +168,73 @@ const Index = () => {
             <ProcessingOptions scale={scale} setScale={setScale} enhancementType={enhancementType} setEnhancementType={setEnhancementType} isProcessing={isProcessing} handleImageProcessing={handleImageProcessing} originalImage={originalImage} />
           </Card>
         </div>
+
+        {/* Image History Section */}
+        {processedImages.length > 0 && (
+          <div className="mb-16">
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-2xl font-semibold text-slate-800">Your Enhanced Images</h2>
+              <Button 
+                variant="outline" 
+                className="text-red-600 border-red-200 hover:bg-red-50"
+                onClick={() => {
+                  setProcessedImages([]);
+                  toast.success("History cleared");
+                }}
+              >
+                Clear History
+              </Button>
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {processedImages.map((item) => (
+                <Card key={item.id} className="overflow-hidden border border-slate-200 shadow-md">
+                  <div className="relative aspect-video overflow-hidden bg-slate-100">
+                    <img 
+                      src={item.processedImage} 
+                      alt="Enhanced" 
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                  <div className="p-4">
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-sm font-medium text-slate-700">
+                        {new Date(item.timestamp).toLocaleDateString()}
+                      </span>
+                      <span className="bg-purple-100 text-purple-800 text-xs px-2 py-1 rounded-full">
+                        {item.scale}x Scale
+                      </span>
+                    </div>
+                    <div className="flex items-center justify-between mb-3">
+                      <span className="text-xs text-slate-500">
+                        {item.enhancementType.charAt(0).toUpperCase() + item.enhancementType.slice(1)}
+                      </span>
+                      <span className="text-xs text-slate-500">
+                        {item.fileSize}
+                      </span>
+                    </div>
+                    <div className="flex space-x-2">
+                      <Button 
+                        className="flex-1 bg-gradient-to-r from-purple-600 to-blue-500 hover:from-purple-700 hover:to-blue-600 text-white"
+                        onClick={() => handleDownload(item.processedImage, 'history-')}
+                      >
+                        <Download className="mr-1 h-4 w-4" />
+                        Download
+                      </Button>
+                      <Button 
+                        variant="outline" 
+                        className="w-10 p-0 border-slate-200"
+                        onClick={() => handleDeleteProcessedImage(item.id)}
+                      >
+                        <Trash2 className="h-4 w-4 text-slate-600" />
+                      </Button>
+                    </div>
+                  </div>
+                </Card>
+              ))}
+            </div>
+          </div>
+        )}
 
         <BeforeAfterExamples />
         <FeatureShowcase />

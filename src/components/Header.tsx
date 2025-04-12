@@ -1,10 +1,7 @@
-
 import { Button } from "@/components/ui/button";
 import { Github, Twitter } from "lucide-react";
-
 const Header = () => {
-  return (
-    <header className="border-b bg-white sticky top-0 z-10">
+  return <header className="border-b bg-white sticky top-0 z-10">
       <div className="container mx-auto px-4 py-3 flex items-center justify-between">
         <div className="flex items-center gap-2">
           <div className="bg-gradient-to-r from-purple-600 to-blue-500 p-2 rounded-md">
@@ -14,7 +11,7 @@ const Header = () => {
               <path d="m6 21 6-6 6 6"></path>
             </svg>
           </div>
-          <span className="font-bold text-xl">PixelPerfect</span>
+          <span className="font-bold text-xl">IMG AI Upscaler</span>
         </div>
         
         <nav className="hidden md:flex items-center space-x-8">
@@ -35,8 +32,6 @@ const Header = () => {
           </Button>
         </div>
       </div>
-    </header>
-  );
+    </header>;
 };
-
 export default Header;

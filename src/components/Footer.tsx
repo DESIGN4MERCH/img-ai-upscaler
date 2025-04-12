@@ -1,4 +1,3 @@
-
 import { Github, Twitter, Instagram } from "lucide-react";
 
 const Footer = () => {
@@ -15,7 +14,7 @@ const Footer = () => {
                   <path d="m6 21 6-6 6 6"></path>
                 </svg>
               </div>
-              <span className="font-bold text-xl">PixelPerfect</span>
+              <span className="font-bold text-xl">IMG AI Upscaler</span>
             </div>
             <p className="text-slate-400 mb-4">
               Enhance your images with cutting-edge AI technology
@@ -65,7 +64,7 @@ const Footer = () => {
         </div>
         
         <div className="border-t border-slate-800 mt-8 pt-8 text-center text-slate-400 text-sm">
-          <p>© {new Date().getFullYear()} PixelPerfect. All rights reserved.</p>
+          <p>© {new Date().getFullYear()} IMG AI Upscaler. All rights reserved.</p>
         </div>
       </div>
     </footer>

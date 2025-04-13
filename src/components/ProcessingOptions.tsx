@@ -4,7 +4,6 @@ import { Button } from "@/components/ui/button";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { LoaderCircle } from "lucide-react";
-import { Slider } from "@/components/ui/slider";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 
 interface ProcessingOptionsProps {
@@ -46,12 +45,14 @@ const ProcessingOptions: React.FC<ProcessingOptionsProps> = ({
               value={value.toString()}
               className={
                 scale === value 
-                  ? "bg-gradient-to-r from-purple-600 to-blue-500 hover:from-purple-700 hover:to-blue-600 text-white"
+                  ? "bg-gradient-to-r from-purple-600 to-blue-500 hover:from-purple-700 hover:to-blue-600 text-white font-bold"
                   : "border-purple-200 bg-white hover:bg-purple-50"
               }
               disabled={isProcessing}
             >
-              {value}x
+              <span className={scale === value ? "text-white font-medium" : "text-slate-700"}>
+                {value}x
+              </span>
             </ToggleGroupItem>
           ))}
         </ToggleGroup>

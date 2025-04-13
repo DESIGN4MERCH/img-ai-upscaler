@@ -23,9 +23,10 @@ export const useUpscaleImage = () => {
         img.onload = () => {
           // Create a canvas to manipulate the image
           const canvas = document.createElement('canvas');
-          // Scale the dimensions based on the scale factor
-          canvas.width = img.width * scale;
-          canvas.height = img.height * scale;
+          // Scale the dimensions based on the scale factor (ensure all scale factors work)
+          const actualScale = scale > 0 ? scale : 2; // Default to 2 if scale is invalid
+          canvas.width = img.width * actualScale;
+          canvas.height = img.height * actualScale;
           
           const ctx = canvas.getContext('2d');
           if (!ctx) {

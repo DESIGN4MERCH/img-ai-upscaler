@@ -2,9 +2,6 @@
 import { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Slider } from "@/components/ui/slider";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Label } from "@/components/ui/label";
 import { Card } from "@/components/ui/card";
 import { toast } from "sonner";
 import { Separator } from "@/components/ui/separator";
@@ -17,7 +14,7 @@ import { useUpscaleImage } from "@/hooks/use-upscale-image";
 import FeatureShowcase from "@/components/FeatureShowcase";
 import FAQ from "@/components/FAQ";
 import BeforeAfterExamples from "@/components/BeforeAfterExamples";
-import { Download, Trash2 } from "lucide-react";
+import { Download, Trash2, Calendar, Scale, Settings } from "lucide-react";
 
 // Interface for tracking processed images
 interface ProcessedImageItem {
@@ -152,7 +149,7 @@ const Index = () => {
               <TabsContent value="result" className="mt-0">
                 {processedImage ? <div className="flex flex-col items-center">
                     <ImageComparison originalImage={originalImage!} processedImage={processedImage} />
-                    <Button className="mt-6 bg-green-600 hover:bg-green-700 text-white py-2 px-8" onClick={() => handleDownload(processedImage)}>
+                    <Button className="mt-6 bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white py-2 px-8 transform transition-all duration-300 hover:scale-105 shadow-md" onClick={() => handleDownload(processedImage)}>
                       <Download className="mr-2 h-4 w-4" />
                       Download Image
                     </Button>
@@ -169,7 +166,7 @@ const Index = () => {
           </Card>
         </div>
 
-        {/* Image History Section */}
+        {/* Image History Section - Redesigned to be more compact */}
         {processedImages.length > 0 && (
           <div className="mb-16">
             <div className="flex items-center justify-between mb-6">
@@ -186,51 +183,52 @@ const Index = () => {
               </Button>
             </div>
             
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="space-y-3">
               {processedImages.map((item) => (
-                <Card key={item.id} className="overflow-hidden border border-slate-200 shadow-md">
-                  <div className="relative aspect-video overflow-hidden bg-slate-100">
+                <div key={item.id} className="bg-white rounded-lg border border-slate-200 shadow-sm hover:shadow-md transition-all p-3 flex items-center">
+                  <div className="w-16 h-16 rounded overflow-hidden flex-shrink-0">
                     <img 
                       src={item.processedImage} 
                       alt="Enhanced" 
                       className="w-full h-full object-cover"
                     />
                   </div>
-                  <div className="p-4">
-                    <div className="flex items-center justify-between mb-2">
-                      <span className="text-sm font-medium text-slate-700">
-                        {new Date(item.timestamp).toLocaleDateString()}
-                      </span>
-                      <span className="bg-purple-100 text-purple-800 text-xs px-2 py-1 rounded-full">
-                        {item.scale}x Scale
-                      </span>
+                  
+                  <div className="flex-grow ml-4 flex flex-col sm:flex-row sm:items-center sm:justify-between">
+                    <div className="flex items-center space-x-3">
+                      <div className="flex items-center space-x-1 text-xs text-slate-500">
+                        <Calendar className="h-3.5 w-3.5" />
+                        <span>{new Date(item.timestamp).toLocaleDateString()}</span>
+                      </div>
+                      <div className="flex items-center space-x-1 text-xs text-purple-600 font-medium">
+                        <Scale className="h-3.5 w-3.5" />
+                        <span>{item.scale}x</span>
+                      </div>
+                      <div className="flex items-center space-x-1 text-xs text-blue-600">
+                        <Settings className="h-3.5 w-3.5" />
+                        <span>{item.enhancementType.charAt(0).toUpperCase() + item.enhancementType.slice(1)}</span>
+                      </div>
+                      <span className="text-xs text-slate-500">{item.fileSize}</span>
                     </div>
-                    <div className="flex items-center justify-between mb-3">
-                      <span className="text-xs text-slate-500">
-                        {item.enhancementType.charAt(0).toUpperCase() + item.enhancementType.slice(1)}
-                      </span>
-                      <span className="text-xs text-slate-500">
-                        {item.fileSize}
-                      </span>
-                    </div>
-                    <div className="flex space-x-2">
+                    
+                    <div className="flex space-x-2 mt-2 sm:mt-0">
                       <Button 
-                        className="flex-1 bg-gradient-to-r from-purple-600 to-blue-500 hover:from-purple-700 hover:to-blue-600 text-white"
+                        className="bg-gradient-to-r from-purple-600 to-blue-500 hover:from-purple-700 hover:to-blue-600 text-white text-xs py-1 h-8"
                         onClick={() => handleDownload(item.processedImage, 'history-')}
                       >
-                        <Download className="mr-1 h-4 w-4" />
+                        <Download className="mr-1 h-3.5 w-3.5" />
                         Download
                       </Button>
                       <Button 
                         variant="outline" 
-                        className="w-10 p-0 border-slate-200"
+                        className="w-8 h-8 p-0 border-slate-200"
                         onClick={() => handleDeleteProcessedImage(item.id)}
                       >
-                        <Trash2 className="h-4 w-4 text-slate-600" />
+                        <Trash2 className="h-3.5 w-3.5 text-slate-600" />
                       </Button>
                     </div>
                   </div>
-                </Card>
+                </div>
               ))}
             </div>
           </div>

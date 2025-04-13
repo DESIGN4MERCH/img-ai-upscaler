@@ -41,16 +41,26 @@ export const useUpscaleImage = () => {
           ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
           
           // Apply different effects based on enhancement type
-          if (enhancementType === 'sharpen' || enhancementType === 'enhance') {
-            // Apply a simple sharpening effect
-            ctx.filter = 'contrast(1.2) saturate(1.2)';
+          if (enhancementType === 'sharpen') {
+            // Apply a more pronounced sharpening effect
+            ctx.filter = 'contrast(1.4) saturate(1.2) brightness(1.05)';
+            ctx.drawImage(canvas, 0, 0);
+            ctx.filter = 'none';
+          } else if (enhancementType === 'enhance') {
+            // Enhanced detail mode
+            ctx.filter = 'contrast(1.3) saturate(1.3) brightness(1.1)';
             ctx.drawImage(canvas, 0, 0);
             ctx.filter = 'none';
           } else if (enhancementType === 'denoise') {
             // Simulate denoising with a slight blur and then sharpening
             ctx.filter = 'blur(0.5px)';
             ctx.drawImage(canvas, 0, 0);
-            ctx.filter = 'contrast(1.1)';
+            ctx.filter = 'contrast(1.2) brightness(1.05)';
+            ctx.drawImage(canvas, 0, 0);
+            ctx.filter = 'none';
+          } else {
+            // Default enhancement
+            ctx.filter = 'contrast(1.1) saturate(1.1) brightness(1.05)';
             ctx.drawImage(canvas, 0, 0);
             ctx.filter = 'none';
           }

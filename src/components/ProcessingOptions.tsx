@@ -25,6 +25,23 @@ const ProcessingOptions: React.FC<ProcessingOptionsProps> = ({
   handleImageProcessing,
   originalImage
 }) => {
+  // Define the allowed scale values
+  const scaleValues = [2, 4, 6, 8, 16];
+  
+  // Find the closest allowed scale value
+  const handleScaleChange = (value: number) => {
+    // Map the slider range (1-8) to our allowed scale values
+    const index = Math.min(Math.floor((value - 1) / 2), scaleValues.length - 1);
+    setScale(scaleValues[index]);
+  };
+  
+  // Map our scale back to slider position (approximate)
+  const getSliderValue = () => {
+    const index = scaleValues.indexOf(scale);
+    if (index === -1) return 1; // Default to 1 if not found
+    return Math.min(index * 2 + 1, 8); // Map back to 1-8 range
+  };
+
   return (
     <div className="space-y-6">
       <div>
@@ -32,17 +49,22 @@ const ProcessingOptions: React.FC<ProcessingOptionsProps> = ({
         <div className="flex items-center justify-between mb-2">
           <span className="text-sm font-medium text-gray-700">1x</span>
           <span className="text-sm font-medium text-purple-600">{scale}x</span>
-          <span className="text-sm font-medium text-gray-700">8x</span>
+          <span className="text-sm font-medium text-gray-700">16x</span>
         </div>
         <Slider
           min={1}
-          max={8}
+          max={5}
           step={1}
-          value={[scale]}
-          onValueChange={(value) => setScale(value[0])}
+          value={[getSliderValue()]}
+          onValueChange={(value) => handleScaleChange(value[0])}
           disabled={isProcessing}
           className="mb-4"
         />
+        <div className="flex justify-between text-xs text-gray-500 px-1">
+          {scaleValues.map((value) => (
+            <span key={value}>{value}x</span>
+          ))}
+        </div>
       </div>
 
       <div>
@@ -73,7 +95,7 @@ const ProcessingOptions: React.FC<ProcessingOptionsProps> = ({
       </div>
 
       <Button
-        className="w-full bg-gradient-to-r from-purple-600 to-blue-500 hover:from-purple-700 hover:to-blue-600 text-white mt-6"
+        className="w-full bg-gradient-to-r from-purple-600 to-blue-500 hover:from-purple-700 hover:to-blue-600 text-white mt-6 transition-all duration-300 transform hover:scale-105"
         onClick={handleImageProcessing}
         disabled={isProcessing || !originalImage}
       >

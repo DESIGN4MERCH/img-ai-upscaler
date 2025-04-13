@@ -1,7 +1,6 @@
 
 import React from "react";
 import { Button } from "@/components/ui/button";
-import { Slider } from "@/components/ui/slider";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { LoaderCircle } from "lucide-react";
@@ -28,41 +27,26 @@ const ProcessingOptions: React.FC<ProcessingOptionsProps> = ({
   // Define the allowed scale values
   const scaleValues = [2, 4, 6, 8, 16];
   
-  // Find the closest allowed scale value
-  const handleScaleChange = (value: number) => {
-    // Map the slider range (1-8) to our allowed scale values
-    const index = Math.min(Math.floor((value - 1) / 2), scaleValues.length - 1);
-    setScale(scaleValues[index]);
-  };
-  
-  // Map our scale back to slider position (approximate)
-  const getSliderValue = () => {
-    const index = scaleValues.indexOf(scale);
-    if (index === -1) return 1; // Default to 1 if not found
-    return Math.min(index * 2 + 1, 8); // Map back to 1-8 range
-  };
-
   return (
     <div className="space-y-6">
       <div>
-        <h3 className="font-medium mb-2">Scale Factor</h3>
-        <div className="flex items-center justify-between mb-2">
-          <span className="text-sm font-medium text-gray-700">1x</span>
-          <span className="text-sm font-medium text-purple-600">{scale}x</span>
-          <span className="text-sm font-medium text-gray-700">16x</span>
-        </div>
-        <Slider
-          min={1}
-          max={5}
-          step={1}
-          value={[getSliderValue()]}
-          onValueChange={(value) => handleScaleChange(value[0])}
-          disabled={isProcessing}
-          className="mb-4"
-        />
-        <div className="flex justify-between text-xs text-gray-500 px-1">
+        <h3 className="font-medium mb-3">Scale Factor</h3>
+        <div className="grid grid-cols-5 gap-2">
           {scaleValues.map((value) => (
-            <span key={value}>{value}x</span>
+            <Button
+              key={value}
+              type="button"
+              variant={scale === value ? "default" : "outline"}
+              className={
+                scale === value 
+                  ? "bg-gradient-to-r from-purple-600 to-blue-500 hover:from-purple-700 hover:to-blue-600 text-white"
+                  : "border-purple-200 bg-white hover:bg-purple-50"
+              }
+              onClick={() => setScale(value)}
+              disabled={isProcessing}
+            >
+              {value}x
+            </Button>
           ))}
         </div>
       </div>

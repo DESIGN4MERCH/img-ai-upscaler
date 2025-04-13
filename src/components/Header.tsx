@@ -1,7 +1,19 @@
 
 import { Button } from "@/components/ui/button";
+import { useState } from "react";
+import { toast } from "sonner";
 
 const Header = () => {
+  const [isLoading, setIsLoading] = useState(false);
+  
+  const handleSignUp = () => {
+    setIsLoading(true);
+    setTimeout(() => {
+      setIsLoading(false);
+      toast.success("Welcome to IMG AI Upscaler! Check your email to confirm your account.");
+    }, 1500);
+  };
+  
   return <header className="border-b bg-white sticky top-0 z-10">
       <div className="container mx-auto px-30 py-3 flex items-center justify-between">
         <div className="flex items-center gap-2">
@@ -26,11 +38,16 @@ const Header = () => {
         </nav>
         
         <div className="flex items-center">
-          <Button className="bg-gradient-to-r from-purple-600 to-blue-500 hover:from-purple-700 hover:to-blue-600 text-white transition-all duration-300 transform hover:scale-105 shadow-md">
-            Sign Up Free
+          <Button 
+            className="bg-gradient-to-r from-purple-600 to-blue-500 hover:from-purple-700 hover:to-blue-600 text-white transition-all duration-300 transform hover:scale-105 shadow-md"
+            onClick={handleSignUp}
+            disabled={isLoading}
+          >
+            {isLoading ? "Signing Up..." : "Sign Up Free"}
           </Button>
         </div>
       </div>
     </header>;
 };
+
 export default Header;

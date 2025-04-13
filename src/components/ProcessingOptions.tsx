@@ -4,6 +4,8 @@ import { Button } from "@/components/ui/button";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { LoaderCircle } from "lucide-react";
+import { Slider } from "@/components/ui/slider";
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 
 interface ProcessingOptionsProps {
   scale: number;
@@ -31,24 +33,28 @@ const ProcessingOptions: React.FC<ProcessingOptionsProps> = ({
     <div className="space-y-6">
       <div>
         <h3 className="font-medium mb-3">Scale Factor</h3>
-        <div className="grid grid-cols-5 gap-2">
+        <ToggleGroup 
+          type="single" 
+          value={scale.toString()} 
+          onValueChange={(value) => value && setScale(parseInt(value))}
+          className="grid grid-cols-5 w-full gap-2"
+          disabled={isProcessing}
+        >
           {scaleValues.map((value) => (
-            <Button
+            <ToggleGroupItem
               key={value}
-              type="button"
-              variant={scale === value ? "default" : "outline"}
+              value={value.toString()}
               className={
                 scale === value 
                   ? "bg-gradient-to-r from-purple-600 to-blue-500 hover:from-purple-700 hover:to-blue-600 text-white"
                   : "border-purple-200 bg-white hover:bg-purple-50"
               }
-              onClick={() => setScale(value)}
               disabled={isProcessing}
             >
               {value}x
-            </Button>
+            </ToggleGroupItem>
           ))}
-        </div>
+        </ToggleGroup>
       </div>
 
       <div>

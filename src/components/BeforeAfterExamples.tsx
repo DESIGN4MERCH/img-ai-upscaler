@@ -53,13 +53,15 @@ const BeforeAfterExamples = () => {
                 </div>
               </div>
               <div className="relative w-full h-full">
-                <div className="absolute inset-0 z-[2] hover:z-0 transition-all duration-300">
+                {/* After image (shows on hover) */}
+                <div className="absolute inset-0 z-[2] hover:z-0 transition-all duration-300 ease-in-out">
                   <img 
                     src={example.afterImage} 
                     alt={`${example.title} - After`} 
                     className="w-full h-full object-cover"
                   />
                 </div>
+                {/* Before image (shows by default) */}
                 <div className="absolute inset-0 z-[1]">
                   <img 
                     src={example.beforeImage} 
@@ -72,7 +74,7 @@ const BeforeAfterExamples = () => {
             <div className="p-5">
               <h3 className="text-lg font-semibold text-purple-800 mb-2">{example.title}</h3>
               <p className="text-slate-600 text-sm mb-3">{example.description}</p>
-              <Button className="w-full bg-gradient-to-r from-purple-600 to-blue-500 hover:from-purple-700 hover:to-blue-600 text-white transition-all duration-300">
+              <Button variant="default" className="w-full bg-gradient-to-r from-purple-600 to-blue-500 hover:from-purple-700 hover:to-blue-600 text-white transition-all duration-300">
                 Try This Enhancement
                 <ExternalLink className="ml-2 h-4 w-4" />
               </Button>

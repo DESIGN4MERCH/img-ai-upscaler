@@ -1,16 +1,21 @@
 
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
-import { toast } from "sonner";
-import { Home, Sun, Moon, Info, Settings, FileText, ChevronDown } from "lucide-react";
-import { NavigationMenu, NavigationMenuItem, NavigationMenuLink, NavigationMenuList } from "@/components/ui/navigation-menu";
+import { Home, Sun, Moon } from "lucide-react";
+import { NavigationMenu, NavigationMenuItem, NavigationMenuList } from "@/components/ui/navigation-menu";
 import { useTheme } from "next-themes";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 
 const Header = () => {
   const { theme, setTheme } = useTheme();
+  const location = useLocation();
   
   const scrollToSection = (sectionId: string) => {
+    if (location.pathname !== '/') {
+      window.location.href = `/#${sectionId}`;
+      return;
+    }
+    
     const element = document.getElementById(sectionId);
     if (element) {
       element.scrollIntoView({ behavior: 'smooth' });
@@ -33,12 +38,17 @@ const Header = () => {
     <div className="container mx-auto px-4 py-3">
       <div className="flex items-center justify-between">
         <div className="flex items-center space-x-8">
-          <Link to="/" className="flex items-center gap-2">
-            <div className="relative bg-gradient-to-br from-purple-600 to-blue-500 p-2.5 rounded-md shadow-lg">
-              <Home className="w-6 h-6 text-white animate-pulse" />
-              <div className="absolute -inset-0.5 rounded-md bg-white/20 blur-sm -z-10"></div>
-            </div>
-          </Link>
+          <div className="flex items-center gap-3">
+            <Link to="/" className="flex items-center gap-2">
+              <div className="relative bg-gradient-to-br from-purple-600 to-blue-500 p-2 rounded-md shadow-lg">
+                <Home className="w-4 h-4 text-white" />
+                <div className="absolute -inset-0.5 rounded-md bg-white/20 blur-sm -z-10"></div>
+              </div>
+            </Link>
+            <Link to="/" className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-600 to-blue-500">
+              IMG AI Upscaler
+            </Link>
+          </div>
           
           <NavigationMenu>
             <NavigationMenuList className="flex space-x-6">
@@ -47,8 +57,7 @@ const Header = () => {
                   onClick={() => scrollToSection('features')}
                   className="flex items-center gap-2 text-gray-700 dark:text-gray-300 hover:text-purple-600 dark:hover:text-purple-400 transition-colors"
                 >
-                  <Settings className="w-4 h-4" />
-                  <span>Features</span>
+                  Features
                 </button>
               </NavigationMenuItem>
 
@@ -57,8 +66,7 @@ const Header = () => {
                   onClick={() => scrollToSection('documentation')}
                   className="flex items-center gap-2 text-gray-700 dark:text-gray-300 hover:text-purple-600 dark:hover:text-purple-400 transition-colors"
                 >
-                  <FileText className="w-4 h-4" />
-                  <span>Documentation</span>
+                  Documentation
                 </button>
               </NavigationMenuItem>
 
@@ -67,8 +75,7 @@ const Header = () => {
                   onClick={() => scrollToSection('about')}
                   className="flex items-center gap-2 text-gray-700 dark:text-gray-300 hover:text-purple-600 dark:hover:text-purple-400 transition-colors"
                 >
-                  <Info className="w-4 h-4" />
-                  <span>About Us</span>
+                  About Us
                 </button>
               </NavigationMenuItem>
 
@@ -77,8 +84,7 @@ const Header = () => {
                   to="/blog"
                   className="flex items-center gap-2 text-gray-700 dark:text-gray-300 hover:text-purple-600 dark:hover:text-purple-400 transition-colors"
                 >
-                  <FileText className="w-4 h-4" />
-                  <span>Blog</span>
+                  Blog
                 </Link>
               </NavigationMenuItem>
             </NavigationMenuList>

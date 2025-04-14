@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { toast } from "sonner";
 import Header from "@/components/Header";
@@ -7,7 +8,7 @@ import FAQ from "@/components/FAQ";
 import { useUpscaleImage } from "@/hooks/use-upscale-image";
 import ImageProcessingSection from "@/components/ImageProcessingSection";
 import HistorySection from "@/components/HistorySection";
-import { ProcessedImageItem } from "@/components/HistorySection";
+import { ProcessedImageItem } from "@/types";
 import { calculateFileSize, downloadImage } from "@/utils/imageUtils";
 import AdBanner from "@/components/AdBanner";
 import NewsletterForm from "@/components/NewsletterForm";

@@ -3,7 +3,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { Download, Trash2, Calendar, Scale, Settings, ChevronDown } from "lucide-react";
-import { ProcessedImageItem } from "@/components/HistorySection";
+import { ProcessedImageItem } from "@/types";
 
 interface HistorySectionProps {
   processedImages: ProcessedImageItem[];

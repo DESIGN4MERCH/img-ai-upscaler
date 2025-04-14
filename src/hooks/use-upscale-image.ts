@@ -20,23 +20,30 @@ export const useUpscaleImage = () => {
           const canvas = document.createElement('canvas');
           const actualScale = scale > 0 ? scale : 2;
           
-          const maxDimension = 16000;
-          const targetWidth = img.width * actualScale;
-          const targetHeight = img.height * actualScale;
+          const maxInputDimension = 8000;
+          const maxOutputDimension = 16000;
           
-          if (targetWidth > maxDimension || targetHeight > maxDimension) {
+          let targetWidth = img.width * actualScale;
+          let targetHeight = img.height * actualScale;
+          
+          if (img.width > maxInputDimension || img.height > maxInputDimension) {
+            toast.error(`Input image dimensions must not exceed ${maxInputDimension}px`);
+            throw new Error("Input image too large");
+          }
+          
+          if (targetWidth > maxOutputDimension || targetHeight > maxOutputDimension) {
             const aspectRatio = img.width / img.height;
             if (aspectRatio >= 1) {
-              canvas.width = maxDimension;
-              canvas.height = maxDimension / aspectRatio;
+              targetWidth = maxOutputDimension;
+              targetHeight = maxOutputDimension / aspectRatio;
             } else {
-              canvas.height = maxDimension;
-              canvas.width = maxDimension * aspectRatio;
+              targetHeight = maxOutputDimension;
+              targetWidth = maxOutputDimension * aspectRatio;
             }
-          } else {
-            canvas.width = targetWidth;
-            canvas.height = targetHeight;
           }
+          
+          canvas.width = targetWidth;
+          canvas.height = targetHeight;
           
           const ctx = canvas.getContext('2d');
           if (!ctx) {

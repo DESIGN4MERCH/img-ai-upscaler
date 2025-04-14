@@ -25,8 +25,8 @@ const ProcessingOptions: React.FC<ProcessingOptionsProps> = ({
   handleImageProcessing,
   originalImage
 }) => {
-  // Define the allowed scale values
-  const scaleValues = [2, 4, 6, 8, 16];
+  // Define the allowed scale values (removed 16)
+  const scaleValues = [2, 4, 6, 8];
   
   return (
     <div className="space-y-6">
@@ -36,7 +36,7 @@ const ProcessingOptions: React.FC<ProcessingOptionsProps> = ({
           type="single" 
           value={scale.toString()} 
           onValueChange={(value) => value && setScale(parseInt(value))}
-          className="grid grid-cols-5 w-full gap-2"
+          className="grid grid-cols-4 w-full gap-2"
           disabled={isProcessing}
         >
           {scaleValues.map((value) => (
@@ -46,11 +46,11 @@ const ProcessingOptions: React.FC<ProcessingOptionsProps> = ({
               className={
                 scale === value 
                   ? "bg-gradient-to-r from-purple-600 to-blue-500 hover:from-purple-700 hover:to-blue-600 text-white font-bold"
-                  : "border-purple-200 bg-white hover:bg-purple-50"
+                  : "border-purple-200 bg-white dark:bg-gray-800 hover:bg-purple-50 dark:hover:bg-gray-700"
               }
               disabled={isProcessing}
             >
-              <span className={scale === value ? "text-white font-medium" : "text-slate-700"}>
+              <span className={scale === value ? "text-white font-medium text-lg" : "text-slate-700 dark:text-slate-200"}>
                 {value}x
               </span>
             </ToggleGroupItem>

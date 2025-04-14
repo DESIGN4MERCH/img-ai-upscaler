@@ -10,6 +10,7 @@ import HistorySection from "@/components/HistorySection";
 import { ProcessedImageItem } from "@/components/HistorySection";
 import { calculateFileSize, downloadImage } from "@/utils/imageUtils";
 import AdBanner from "@/components/AdBanner";
+import NewsletterForm from "@/components/NewsletterForm";
 
 const Index = () => {
   const [originalImage, setOriginalImage] = useState<string | null>(null);
@@ -57,6 +58,12 @@ const Index = () => {
       };
       
       setProcessedImages(prev => [newProcessedImage, ...prev].slice(0, 10));
+      
+      const resultTab = document.querySelector('[value="result"]');
+      if (resultTab instanceof HTMLElement) {
+        resultTab.click();
+      }
+      
       toast.success("Image successfully upscaled!");
     } catch (error) {
       console.error("Error processing image:", error);
@@ -72,7 +79,7 @@ const Index = () => {
   };
 
   return (
-    <div className="flex flex-col min-h-screen bg-gradient-to-b from-slate-50 to-slate-100">
+    <div className="flex flex-col min-h-screen bg-gradient-to-b from-slate-50 to-slate-100 dark:from-gray-900 dark:to-gray-800">
       <Header />
       
       <main className="flex-1 container mx-auto px-4 md:px-8 py-8">
@@ -100,6 +107,8 @@ const Index = () => {
         />
 
         <AdBanner />
+        
+        <NewsletterForm />
 
         <HistorySection 
           processedImages={processedImages} 

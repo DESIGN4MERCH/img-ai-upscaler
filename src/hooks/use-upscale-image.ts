@@ -1,4 +1,6 @@
+
 import { useState } from "react";
+import { toast } from "sonner";
 
 export const useUpscaleImage = () => {
   const [isLoading, setIsLoading] = useState(false);

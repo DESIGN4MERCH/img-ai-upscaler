@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { toast } from "sonner";
 import Header from "@/components/Header";
@@ -10,6 +9,7 @@ import ImageProcessingSection from "@/components/ImageProcessingSection";
 import HistorySection from "@/components/HistorySection";
 import { ProcessedImageItem } from "@/components/HistorySection";
 import { calculateFileSize, downloadImage } from "@/utils/imageUtils";
+import AdBanner from "@/components/AdBanner";
 
 const Index = () => {
   const [originalImage, setOriginalImage] = useState<string | null>(null);
@@ -21,7 +21,6 @@ const Index = () => {
   const [processedImages, setProcessedImages] = useState<ProcessedImageItem[]>([]);
   const { upscaleImage } = useUpscaleImage();
 
-  // Load processed images from localStorage on component mount
   useEffect(() => {
     const savedImages = localStorage.getItem('processedImages');
     if (savedImages) {
@@ -33,7 +32,6 @@ const Index = () => {
     }
   }, []);
 
-  // Save processed images to localStorage whenever the array changes
   useEffect(() => {
     localStorage.setItem('processedImages', JSON.stringify(processedImages));
   }, [processedImages]);
@@ -48,7 +46,6 @@ const Index = () => {
       const result = await upscaleImage(originalImage, scale, enhancementType, apiKey);
       setProcessedImage(result);
       
-      // Add to processed images history
       const newProcessedImage: ProcessedImageItem = {
         id: Date.now().toString(),
         originalImage,
@@ -59,7 +56,7 @@ const Index = () => {
         scale
       };
       
-      setProcessedImages(prev => [newProcessedImage, ...prev].slice(0, 10)); // Keep last 10 images
+      setProcessedImages(prev => [newProcessedImage, ...prev].slice(0, 10));
       toast.success("Image successfully upscaled!");
     } catch (error) {
       console.error("Error processing image:", error);
@@ -101,6 +98,8 @@ const Index = () => {
           handleImageProcessing={handleImageProcessing}
           handleDownload={handleDownload}
         />
+
+        <AdBanner />
 
         <HistorySection 
           processedImages={processedImages} 

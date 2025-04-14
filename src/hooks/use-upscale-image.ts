@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 
 export const useUpscaleImage = () => {
@@ -15,62 +14,68 @@ export const useUpscaleImage = () => {
     setError(null);
 
     try {
-      // This simulates API processing but actually enhances the image
-      // by applying a simple sharpening filter to demonstrate visual change
       return new Promise((resolve) => {
-        // Create an image element to load the image data
         const img = new Image();
         img.onload = () => {
-          // Create a canvas to manipulate the image
           const canvas = document.createElement('canvas');
-          // Scale the dimensions based on the scale factor (ensure all scale factors work)
-          const actualScale = scale > 0 ? scale : 2; // Default to 2 if scale is invalid
-          canvas.width = img.width * actualScale;
-          canvas.height = img.height * actualScale;
+          const actualScale = scale > 0 ? scale : 2;
+          
+          const maxDimension = 16000;
+          const targetWidth = img.width * actualScale;
+          const targetHeight = img.height * actualScale;
+          
+          if (targetWidth > maxDimension || targetHeight > maxDimension) {
+            const aspectRatio = img.width / img.height;
+            if (aspectRatio >= 1) {
+              canvas.width = maxDimension;
+              canvas.height = maxDimension / aspectRatio;
+            } else {
+              canvas.height = maxDimension;
+              canvas.width = maxDimension * aspectRatio;
+            }
+          } else {
+            canvas.width = targetWidth;
+            canvas.height = targetHeight;
+          }
           
           const ctx = canvas.getContext('2d');
           if (!ctx) {
-            resolve(imageData); // Fallback if context isn't available
+            resolve(imageData);
             return;
           }
           
-          // Apply different enhancements based on enhancement type
           ctx.imageSmoothingEnabled = true;
           ctx.imageSmoothingQuality = 'high';
           
-          // Draw the image scaled up
           ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
           
-          // Apply different effects based on enhancement type
           if (enhancementType === 'sharpen') {
-            // Apply a more pronounced sharpening effect
             ctx.filter = 'contrast(1.4) saturate(1.2) brightness(1.05)';
             ctx.drawImage(canvas, 0, 0);
             ctx.filter = 'none';
           } else if (enhancementType === 'enhance') {
-            // Enhanced detail mode
             ctx.filter = 'contrast(1.3) saturate(1.3) brightness(1.1)';
             ctx.drawImage(canvas, 0, 0);
             ctx.filter = 'none';
           } else if (enhancementType === 'denoise') {
-            // Simulate denoising with a slight blur and then sharpening
             ctx.filter = 'blur(0.5px)';
             ctx.drawImage(canvas, 0, 0);
             ctx.filter = 'contrast(1.2) brightness(1.05)';
             ctx.drawImage(canvas, 0, 0);
             ctx.filter = 'none';
           } else {
-            // Default enhancement
             ctx.filter = 'contrast(1.1) saturate(1.1) brightness(1.05)';
             ctx.drawImage(canvas, 0, 0);
             ctx.filter = 'none';
           }
           
-          // Convert canvas back to data URL
           const enhancedImageData = canvas.toDataURL('image/jpeg', 0.92);
           
-          // Simulate API delay
           setTimeout(() => {
+            const resultTab = document.querySelector('[value="result"]');
+            if (resultTab instanceof HTMLElement) {
+              resultTab.click();
+            }
             resolve(enhancedImageData);
           }, 1500);
         };

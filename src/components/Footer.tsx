@@ -1,4 +1,3 @@
-
 import { Github, Twitter, Instagram, FileText, Shield, HelpCircle, Info } from "lucide-react";
 
 const Footer = () => {
@@ -37,9 +36,7 @@ const Footer = () => {
             <h3 className="font-semibold text-lg mb-4">Product</h3>
             <ul className="space-y-2">
               <li><a href="#" className="text-slate-400 hover:text-white transition-colors">Features</a></li>
-              <li><a href="#" className="text-slate-400 hover:text-white transition-colors">Pricing</a></li>
-              <li><a href="#" className="text-slate-400 hover:text-white transition-colors">API</a></li>
-              <li><a href="#" className="text-slate-400 hover:text-white transition-colors">Integration</a></li>
+              <li><a href="#" className="text-slate-400 hover:text-white transition-colors">Showcase</a></li>
             </ul>
           </div>
           
@@ -47,8 +44,6 @@ const Footer = () => {
             <h3 className="font-semibold text-lg mb-4">Resources</h3>
             <ul className="space-y-2">
               <li><a href="#" className="text-slate-400 hover:text-white transition-colors">Documentation</a></li>
-              <li><a href="#" className="text-slate-400 hover:text-white transition-colors">Blog</a></li>
-              <li><a href="#" className="text-slate-400 hover:text-white transition-colors">Community</a></li>
               <li><a href="#" className="text-slate-400 hover:text-white transition-colors">Support</a></li>
             </ul>
           </div>
@@ -64,7 +59,6 @@ const Footer = () => {
           </div>
         </div>
         
-        {/* Secondary menu for policies and terms */}
         <div className="mt-12 pt-6 border-t border-slate-800">
           <div className="flex flex-wrap justify-center gap-6 mb-4">
             <a href="#" className="flex items-center text-slate-400 hover:text-white transition-colors">

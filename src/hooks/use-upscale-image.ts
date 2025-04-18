@@ -16,84 +16,51 @@ export const useUpscaleImage = () => {
     setError(null);
 
     try {
-      return new Promise((resolve) => {
-        const img = new Image();
-        img.onload = () => {
-          const canvas = document.createElement('canvas');
-          const actualScale = scale > 0 ? scale : 2;
-          
-          const maxInputDimension = 8000;
-          const maxOutputDimension = 16000;
-          
-          let targetWidth = img.width * actualScale;
-          let targetHeight = img.height * actualScale;
-          
-          if (img.width > maxInputDimension || img.height > maxInputDimension) {
-            toast.error(`Input image dimensions must not exceed ${maxInputDimension}px`);
-            throw new Error("Input image too large");
-          }
-          
-          if (targetWidth > maxOutputDimension || targetHeight > maxOutputDimension) {
-            const aspectRatio = img.width / img.height;
-            if (aspectRatio >= 1) {
-              targetWidth = maxOutputDimension;
-              targetHeight = maxOutputDimension / aspectRatio;
-            } else {
-              targetHeight = maxOutputDimension;
-              targetWidth = maxOutputDimension * aspectRatio;
-            }
-          }
-          
-          canvas.width = targetWidth;
-          canvas.height = targetHeight;
-          
-          const ctx = canvas.getContext('2d');
-          if (!ctx) {
-            resolve(imageData);
-            return;
-          }
-          
-          ctx.imageSmoothingEnabled = true;
-          ctx.imageSmoothingQuality = 'high';
-          
-          ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-          
-          if (enhancementType === 'sharpen') {
-            ctx.filter = 'contrast(1.4) saturate(1.2) brightness(1.05)';
-            ctx.drawImage(canvas, 0, 0);
-            ctx.filter = 'none';
-          } else if (enhancementType === 'enhance') {
-            ctx.filter = 'contrast(1.3) saturate(1.3) brightness(1.1)';
-            ctx.drawImage(canvas, 0, 0);
-            ctx.filter = 'none';
-          } else if (enhancementType === 'denoise') {
-            ctx.filter = 'blur(0.5px)';
-            ctx.drawImage(canvas, 0, 0);
-            ctx.filter = 'contrast(1.2) brightness(1.05)';
-            ctx.drawImage(canvas, 0, 0);
-            ctx.filter = 'none';
-          } else {
-            ctx.filter = 'contrast(1.1) saturate(1.1) brightness(1.05)';
-            ctx.drawImage(canvas, 0, 0);
-            ctx.filter = 'none';
-          }
-          
-          const enhancedImageData = canvas.toDataURL('image/jpeg', 0.92);
-          
-          setTimeout(() => {
-            const resultTab = document.querySelector('[value="result"]');
-            if (resultTab instanceof HTMLElement) {
-              resultTab.click();
-            }
-            resolve(enhancedImageData);
-          }, 1500);
-        };
-        
-        img.src = imageData;
+      // First, we need to upload the image
+      const blob = await fetch(imageData).then(r => r.blob());
+      const formData = new FormData();
+      formData.append('image', blob, 'image.png');
+
+      const uploadResponse = await fetch('/api/upload', {
+        method: 'POST',
+        body: formData,
       });
+
+      if (!uploadResponse.ok) {
+        const errorData = await uploadResponse.json();
+        throw new Error(errorData.error || 'Failed to upload image');
+      }
+
+      const uploadResult = await uploadResponse.json();
+      const { filename } = uploadResult;
+
+      // Now enhance the uploaded image
+      const enhanceResponse = await fetch('/api/enhance', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          filename,
+          scale,
+          enhancementType,
+        }),
+      });
+
+      if (!enhanceResponse.ok) {
+        const errorData = await enhanceResponse.json();
+        throw new Error(errorData.error || 'Failed to enhance image');
+      }
+
+      const enhanceResult = await enhanceResponse.json();
+      const enhancedImageUrl = enhanceResult.enhancedUrl;
+
+      // Return the full URL to the enhanced image
+      return window.location.origin + enhancedImageUrl;
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'An unknown error occurred';
       setError(errorMessage);
+      toast.error(errorMessage);
       throw err;
     } finally {
       setIsLoading(false);

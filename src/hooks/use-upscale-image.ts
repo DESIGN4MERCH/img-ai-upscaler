@@ -50,6 +50,7 @@ export const useUpscaleImage = () => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Accept': 'application/json'
         },
         body: JSON.stringify({
           filename,
@@ -58,12 +59,42 @@ export const useUpscaleImage = () => {
         }),
       });
 
+      console.log('Enhance response status:', enhanceResponse.status);
+      
+      // Check if the response is JSON by looking at content-type header
+      const contentType = enhanceResponse.headers.get('content-type');
+      console.log('Response content type:', contentType);
+      
       if (!enhanceResponse.ok) {
-        const errorData = await enhanceResponse.json().catch(() => ({ error: 'Enhancement failed' }));
-        throw new Error(errorData.error || 'Failed to enhance image');
+        let errorMessage = 'Failed to enhance image';
+        try {
+          if (contentType && contentType.includes('application/json')) {
+            const errorData = await enhanceResponse.json();
+            errorMessage = errorData.error || errorMessage;
+          } else {
+            // If not JSON, just get the text
+            errorMessage = await enhanceResponse.text();
+            // Truncate if it's too long (likely HTML)
+            if (errorMessage.length > 100) {
+              errorMessage = errorMessage.substring(0, 100) + '...';
+            }
+          }
+        } catch (parseError) {
+          console.error('Error parsing response:', parseError);
+        }
+        throw new Error(errorMessage);
       }
 
-      const enhanceResult = await enhanceResponse.json();
+      let enhanceResult;
+      try {
+        enhanceResult = await enhanceResponse.json();
+      } catch (parseError) {
+        console.error('Error parsing JSON response:', parseError);
+        const responseText = await enhanceResponse.text();
+        console.error('Response text:', responseText.substring(0, 200));
+        throw new Error('Failed to parse server response');
+      }
+      
       const enhancedImageUrl = enhanceResult.enhancedUrl;
       console.log('Enhancement successful, url:', enhancedImageUrl);
 
@@ -78,7 +109,10 @@ export const useUpscaleImage = () => {
       console.error('Image processing error:', errorMessage);
       setError(errorMessage);
       toast.error(errorMessage);
-      throw err;
+      
+      // Fallback: Return the original image
+      console.log('Falling back to original image');
+      return imageData;
     } finally {
       setIsLoading(false);
     }

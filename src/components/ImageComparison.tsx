@@ -42,16 +42,23 @@ const ImageComparison: React.FC<ImageComparisonProps> = ({ originalImage, proces
     };
   }, [isDragging]);
 
+  // Reset state when images change
+  useEffect(() => {
+    setImagesLoaded(false);
+    setHasError(false);
+  }, [originalImage, processedImage]);
+
   const startDrag = () => setIsDragging(true);
   
   const handleImagesLoaded = () => {
+    console.log('Image loaded successfully');
     setImagesLoaded(true);
     setHasError(false);
   };
   
-  const handleImageError = () => {
+  const handleImageError = (e: React.SyntheticEvent<HTMLImageElement>) => {
+    console.error("Error loading image:", (e.target as HTMLImageElement).src);
     setHasError(true);
-    console.error("Error loading one of the images");
   };
 
   // If any of the images has an error or is not loaded yet, show a placeholder or message

@@ -38,18 +38,35 @@ export const downloadImage = (image: string, prefix: string = ''): void => {
         return response.blob();
       })
       .then(blob => {
-        const url = window.URL.createObjectURL(blob);
-        const link = document.createElement('a');
-        link.href = url;
-        link.download = `${prefix}upscaled-image-${new Date().getTime()}.png`;
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-        window.URL.revokeObjectURL(url);
-        console.log('Download completed');
+        // Check if the blob is valid image data
+        if (blob.type.startsWith('image/') || blob.type === 'application/octet-stream') {
+          const url = window.URL.createObjectURL(blob);
+          const link = document.createElement('a');
+          link.href = url;
+          link.download = `${prefix}upscaled-image-${new Date().getTime()}.png`;
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+          window.URL.revokeObjectURL(url);
+          console.log('Download completed');
+        } else {
+          console.error('Downloaded content is not an image:', blob.type);
+          throw new Error('Downloaded content is not an image');
+        }
       })
       .catch(error => {
         console.error('Error downloading image:', error);
+        
+        // Fallback to direct download for data URLs
+        if (image.startsWith('data:')) {
+          console.log('Falling back to data URL download');
+          const link = document.createElement("a");
+          link.href = image;
+          link.download = `${prefix}upscaled-image-${new Date().getTime()}.png`;
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+        }
       });
   } else {
     // For data URLs (legacy support)

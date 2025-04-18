@@ -5,6 +5,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { LoaderCircle } from "lucide-react";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 
 interface ProcessingOptionsProps {
   scale: number;
@@ -84,6 +85,14 @@ const ProcessingOptions: React.FC<ProcessingOptionsProps> = ({
           </div>
         </RadioGroup>
       </div>
+
+      {!originalImage && (
+        <Alert variant="destructive" className="mb-4">
+          <AlertDescription>
+            Please upload an image first
+          </AlertDescription>
+        </Alert>
+      )}
 
       <Button
         className="w-full bg-gradient-to-r from-purple-600 to-blue-500 hover:from-purple-700 hover:to-blue-600 text-white mt-6 transition-all duration-300 transform hover:scale-105"

@@ -66,8 +66,10 @@ app.post('/api/upload', upload.single('image'), (req, res) => {
   }
 });
 
-app.post('/api/enhance', async (req, res) => {
+// Make sure express.json() middleware is applied again here to be certain
+app.post('/api/enhance', express.json(), async (req, res) => {
   try {
+    console.log('Raw request body:', req.body);
     const { filename, scale, enhancementType } = req.body;
     console.log('Enhance request received:', { filename, scale, enhancementType });
     
@@ -79,6 +81,8 @@ app.post('/api/enhance', async (req, res) => {
     const originalPath = path.join(uploadsDir, filename);
     if (!fs.existsSync(originalPath)) {
       console.error('Enhance error: Original image not found at path:', originalPath);
+      
+      // Return a proper JSON error instead of throwing
       return res.status(404).json({ error: 'Original image not found' });
     }
     
@@ -125,7 +129,7 @@ app.post('/api/enhance', async (req, res) => {
       await sharpImage.toFile(enhancedPath);
       console.log('Enhanced image saved to:', enhancedPath);
       
-      res.status(200).json({
+      return res.status(200).json({
         message: 'Image enhanced successfully',
         enhancedFilename,
         enhancedUrl: `/uploads/${enhancedFilename}`
@@ -137,7 +141,7 @@ app.post('/api/enhance', async (req, res) => {
       console.log('Using fallback: copying original file');
       fs.copyFileSync(originalPath, enhancedPath);
       
-      res.status(200).json({
+      return res.status(200).json({
         message: 'Image processed (fallback mode)',
         enhancedFilename,
         enhancedUrl: `/uploads/${enhancedFilename}`
@@ -145,7 +149,8 @@ app.post('/api/enhance', async (req, res) => {
     }
   } catch (error) {
     console.error('Enhancement error:', error);
-    res.status(500).json({ error: 'Image enhancement failed' });
+    // Always return JSON, never throw errors directly
+    return res.status(500).json({ error: 'Image enhancement failed', details: error.message });
   }
 });
 

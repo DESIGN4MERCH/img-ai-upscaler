@@ -55,20 +55,29 @@ const ImageProcessingSection = ({
           </TabsContent>
           
           <TabsContent value="result" className="mt-0">
-            {processedImage ? (
-              <div className="flex flex-col items-center">
+            {processedImage && (
+              <div className="space-y-6">
                 <ImageComparison originalImage={originalImage!} processedImage={processedImage} />
-                <Button 
-                  className="mt-6 bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white py-2 px-8 transform transition-all duration-300 hover:scale-105 shadow-md" 
-                  onClick={() => handleDownload(processedImage)}
-                >
-                  <Download className="mr-2 h-4 w-4" />
-                  Download Image
-                </Button>
-              </div>
-            ) : (
-              <div className="text-center py-20">
-                <p className="text-slate-500 dark:text-slate-400">Process an image to see results</p>
+                
+                <div className="bg-slate-50 dark:bg-slate-800/50 rounded-lg p-4 space-y-4">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div className="space-y-1">
+                      <h3 className="font-medium text-slate-900 dark:text-slate-100">
+                        Enhanced Image
+                      </h3>
+                      <p className="text-sm text-slate-500 dark:text-slate-400">
+                        {`Upscaled ${scale}x with ${enhancementType} enhancement`}
+                      </p>
+                    </div>
+                    <Button 
+                      className="w-full sm:w-auto bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white" 
+                      onClick={() => handleDownload(processedImage)}
+                    >
+                      <Download className="mr-2 h-4 w-4" />
+                      Download Image
+                    </Button>
+                  </div>
+                </div>
               </div>
             )}
           </TabsContent>

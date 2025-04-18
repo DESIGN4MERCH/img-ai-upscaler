@@ -16,6 +16,7 @@ export default defineConfig(({ mode }) => ({
         changeOrigin: true,
         secure: false,
         ws: true,
+        rewrite: (path) => path
       },
       '/uploads': {
         target: 'http://localhost:3001',

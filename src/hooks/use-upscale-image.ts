@@ -16,8 +16,16 @@ export const useUpscaleImage = () => {
     setError(null);
 
     try {
-      // First, we need to upload the image
-      const blob = await fetch(imageData).then(r => r.blob());
+      // For Data URLs vs File URLs
+      let blob;
+      if (imageData.startsWith('data:')) {
+        // It's a data URL
+        blob = await fetch(imageData).then(r => r.blob());
+      } else {
+        // It's already a file URL, need to fetch it first
+        blob = await fetch(imageData).then(r => r.blob());
+      }
+
       const formData = new FormData();
       formData.append('image', blob, 'image.png');
 
@@ -28,7 +36,7 @@ export const useUpscaleImage = () => {
       });
 
       if (!uploadResponse.ok) {
-        const errorData = await uploadResponse.json();
+        const errorData = await uploadResponse.json().catch(() => ({ error: 'Upload failed' }));
         throw new Error(errorData.error || 'Failed to upload image');
       }
 
@@ -51,7 +59,7 @@ export const useUpscaleImage = () => {
       });
 
       if (!enhanceResponse.ok) {
-        const errorData = await enhanceResponse.json();
+        const errorData = await enhanceResponse.json().catch(() => ({ error: 'Enhancement failed' }));
         throw new Error(errorData.error || 'Failed to enhance image');
       }
 
@@ -60,7 +68,11 @@ export const useUpscaleImage = () => {
       console.log('Enhancement successful, url:', enhancedImageUrl);
 
       // Return the full URL to the enhanced image
-      return window.location.origin + enhancedImageUrl;
+      const fullUrl = enhancedImageUrl.startsWith('http') 
+        ? enhancedImageUrl 
+        : window.location.origin + enhancedImageUrl;
+      
+      return fullUrl;
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'An unknown error occurred';
       console.error('Image processing error:', errorMessage);

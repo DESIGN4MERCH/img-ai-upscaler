@@ -26,7 +26,7 @@ const storage = multer.diskStorage({
   },
   filename: (req, file, cb) => {
     const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-    const ext = path.extname(file.originalname);
+    const ext = path.extname(file.originalname) || '.png';
     cb(null, 'original-' + uniqueSuffix + ext);
   }
 });
@@ -66,7 +66,7 @@ app.post('/api/upload', upload.single('image'), (req, res) => {
   }
 });
 
-app.post('/api/enhance', express.json(), async (req, res) => {
+app.post('/api/enhance', async (req, res) => {
   try {
     const { filename, scale, enhancementType } = req.body;
     console.log('Enhance request received:', { filename, scale, enhancementType });
@@ -83,7 +83,7 @@ app.post('/api/enhance', express.json(), async (req, res) => {
     }
     
     // Create enhanced filename
-    const fileExt = path.extname(filename);
+    const fileExt = path.extname(filename) || '.png';
     const enhancedFilename = `enhanced-${Date.now()}${fileExt}`;
     const enhancedPath = path.join(uploadsDir, enhancedFilename);
     
@@ -96,8 +96,8 @@ app.post('/api/enhance', express.json(), async (req, res) => {
       // Apply scale factor (2x, 4x, etc.)
       const scaleFactor = parseInt(String(scale)) || 2;
       const metadata = await sharpImage.metadata();
-      const width = metadata.width || 0;
-      const height = metadata.height || 0;
+      const width = metadata.width || 100;
+      const height = metadata.height || 100;
       
       console.log('Original dimensions:', { width, height });
       console.log('Scaling to:', { width: width * scaleFactor, height: height * scaleFactor });

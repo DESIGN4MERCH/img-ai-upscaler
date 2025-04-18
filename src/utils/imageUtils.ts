@@ -18,12 +18,25 @@ export const calculateFileSize = (dataUrl: string): string => {
 };
 
 export const downloadImage = (image: string, prefix: string = ''): void => {
-  if (!image) return;
+  if (!image) {
+    console.error('No image provided for download');
+    return;
+  }
+  
+  console.log('Downloading image:', image);
   
   // For URLs (from our backend), we need to fetch the image first
-  if (image.startsWith('http')) {
-    fetch(image)
-      .then(response => response.blob())
+  if (image.startsWith('http') || image.startsWith('/')) {
+    const fullUrl = image.startsWith('/') ? window.location.origin + image : image;
+    console.log('Fetching from URL:', fullUrl);
+    
+    fetch(fullUrl)
+      .then(response => {
+        if (!response.ok) {
+          throw new Error(`Network response was not ok: ${response.status}`);
+        }
+        return response.blob();
+      })
       .then(blob => {
         const url = window.URL.createObjectURL(blob);
         const link = document.createElement('a');
@@ -33,17 +46,20 @@ export const downloadImage = (image: string, prefix: string = ''): void => {
         link.click();
         document.body.removeChild(link);
         window.URL.revokeObjectURL(url);
+        console.log('Download completed');
       })
       .catch(error => {
         console.error('Error downloading image:', error);
       });
   } else {
     // For data URLs (legacy support)
+    console.log('Downloading from data URL');
     const link = document.createElement("a");
     link.href = image;
     link.download = `${prefix}upscaled-image-${new Date().getTime()}.png`;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
+    console.log('Download completed');
   }
 };

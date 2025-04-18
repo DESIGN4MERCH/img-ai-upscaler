@@ -21,6 +21,7 @@ export const useUpscaleImage = () => {
       const formData = new FormData();
       formData.append('image', blob, 'image.png');
 
+      console.log('Uploading image...');
       const uploadResponse = await fetch('/api/upload', {
         method: 'POST',
         body: formData,
@@ -33,8 +34,10 @@ export const useUpscaleImage = () => {
 
       const uploadResult = await uploadResponse.json();
       const { filename } = uploadResult;
+      console.log('Image uploaded successfully, filename:', filename);
 
       // Now enhance the uploaded image
+      console.log('Enhancing image with scale:', scale, 'and type:', enhancementType);
       const enhanceResponse = await fetch('/api/enhance', {
         method: 'POST',
         headers: {
@@ -54,11 +57,13 @@ export const useUpscaleImage = () => {
 
       const enhanceResult = await enhanceResponse.json();
       const enhancedImageUrl = enhanceResult.enhancedUrl;
+      console.log('Enhancement successful, url:', enhancedImageUrl);
 
       // Return the full URL to the enhanced image
       return window.location.origin + enhancedImageUrl;
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'An unknown error occurred';
+      console.error('Image processing error:', errorMessage);
       setError(errorMessage);
       toast.error(errorMessage);
       throw err;

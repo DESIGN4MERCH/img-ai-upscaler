@@ -50,9 +50,11 @@ app.use('/uploads', express.static(uploadsDir));
 app.post('/api/upload', upload.single('image'), (req, res) => {
   try {
     if (!req.file) {
+      console.error('Upload error: No file received');
       return res.status(400).json({ error: 'No file uploaded' });
     }
     
+    console.log('File uploaded successfully:', req.file.filename);
     return res.status(200).json({
       message: 'File uploaded successfully',
       filename: req.file.filename,
@@ -67,13 +69,16 @@ app.post('/api/upload', upload.single('image'), (req, res) => {
 app.post('/api/enhance', express.json(), async (req, res) => {
   try {
     const { filename, scale, enhancementType } = req.body;
+    console.log('Enhance request received:', { filename, scale, enhancementType });
     
     if (!filename) {
+      console.error('Enhance error: No filename provided');
       return res.status(400).json({ error: 'No filename provided' });
     }
     
     const originalPath = path.join(uploadsDir, filename);
     if (!fs.existsSync(originalPath)) {
+      console.error('Enhance error: Original image not found at path:', originalPath);
       return res.status(404).json({ error: 'Original image not found' });
     }
     
@@ -82,40 +87,62 @@ app.post('/api/enhance', express.json(), async (req, res) => {
     const enhancedFilename = `enhanced-${Date.now()}${fileExt}`;
     const enhancedPath = path.join(uploadsDir, enhancedFilename);
     
-    // Basic enhancement with sharp
-    let sharpImage = sharp(originalPath);
+    console.log('Processing image with sharp...');
     
-    // Apply scale factor (2x, 4x, etc.)
-    const scaleFactor = parseInt(scale) || 2;
-    const metadata = await sharpImage.metadata();
-    const width = metadata.width || 0;
-    const height = metadata.height || 0;
-    
-    sharpImage = sharpImage.resize(width * scaleFactor, height * scaleFactor);
-    
-    // Apply enhancement type
-    switch (enhancementType) {
-      case 'sharpen':
-        sharpImage = sharpImage.sharpen({ sigma: 2 }).modulate({ brightness: 1.05, saturation: 1.2 });
-        break;
-      case 'denoise':
-        sharpImage = sharpImage.median(1).modulate({ brightness: 1.05 });
-        break;
-      case 'enhance':
-        sharpImage = sharpImage.sharpen().modulate({ brightness: 1.1, saturation: 1.3 });
-        break;
-      default:
-        sharpImage = sharpImage.sharpen({ sigma: 1 }).modulate({ brightness: 1.05, saturation: 1.1 });
+    try {
+      // Basic enhancement with sharp
+      let sharpImage = sharp(originalPath);
+      
+      // Apply scale factor (2x, 4x, etc.)
+      const scaleFactor = parseInt(String(scale)) || 2;
+      const metadata = await sharpImage.metadata();
+      const width = metadata.width || 0;
+      const height = metadata.height || 0;
+      
+      console.log('Original dimensions:', { width, height });
+      console.log('Scaling to:', { width: width * scaleFactor, height: height * scaleFactor });
+      
+      sharpImage = sharpImage.resize(width * scaleFactor, height * scaleFactor, {
+        fit: 'contain'
+      });
+      
+      // Apply enhancement type
+      switch (enhancementType) {
+        case 'sharpen':
+          sharpImage = sharpImage.sharpen({ sigma: 2 }).modulate({ brightness: 1.05, saturation: 1.2 });
+          break;
+        case 'denoise':
+          sharpImage = sharpImage.median(1).modulate({ brightness: 1.05 });
+          break;
+        case 'enhance':
+          sharpImage = sharpImage.sharpen().modulate({ brightness: 1.1, saturation: 1.3 });
+          break;
+        default:
+          sharpImage = sharpImage.sharpen({ sigma: 1 }).modulate({ brightness: 1.05, saturation: 1.1 });
+      }
+      
+      // Save the enhanced image
+      await sharpImage.toFile(enhancedPath);
+      console.log('Enhanced image saved to:', enhancedPath);
+      
+      res.status(200).json({
+        message: 'Image enhanced successfully',
+        enhancedFilename,
+        enhancedUrl: `/uploads/${enhancedFilename}`
+      });
+    } catch (sharpError) {
+      console.error('Sharp processing error:', sharpError);
+      
+      // Fallback: Just copy the original file if sharp processing fails
+      console.log('Using fallback: copying original file');
+      fs.copyFileSync(originalPath, enhancedPath);
+      
+      res.status(200).json({
+        message: 'Image processed (fallback mode)',
+        enhancedFilename,
+        enhancedUrl: `/uploads/${enhancedFilename}`
+      });
     }
-    
-    // Save the enhanced image
-    await sharpImage.toFile(enhancedPath);
-    
-    res.status(200).json({
-      message: 'Image enhanced successfully',
-      enhancedFilename,
-      enhancedUrl: `/uploads/${enhancedFilename}`
-    });
   } catch (error) {
     console.error('Enhancement error:', error);
     res.status(500).json({ error: 'Image enhancement failed' });

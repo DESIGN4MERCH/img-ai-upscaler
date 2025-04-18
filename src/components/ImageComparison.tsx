@@ -10,6 +10,8 @@ const ImageComparison: React.FC<ImageComparisonProps> = ({ originalImage, proces
   const [sliderPosition, setSliderPosition] = useState(50);
   const containerRef = useRef<HTMLDivElement>(null);
   const [isDragging, setIsDragging] = useState(false);
+  const [imagesLoaded, setImagesLoaded] = useState(false);
+  const [hasError, setHasError] = useState(false);
 
   useEffect(() => {
     const handleMove = (clientX: number) => {
@@ -41,6 +43,25 @@ const ImageComparison: React.FC<ImageComparisonProps> = ({ originalImage, proces
   }, [isDragging]);
 
   const startDrag = () => setIsDragging(true);
+  
+  const handleImagesLoaded = () => {
+    setImagesLoaded(true);
+    setHasError(false);
+  };
+  
+  const handleImageError = () => {
+    setHasError(true);
+    console.error("Error loading one of the images");
+  };
+
+  // If any of the images has an error or is not loaded yet, show a placeholder or message
+  if (hasError) {
+    return (
+      <div className="w-full p-6 text-center bg-slate-100 dark:bg-slate-800 rounded-lg">
+        <p className="text-slate-500 dark:text-slate-400">Error loading images. Please try again.</p>
+      </div>
+    );
+  }
 
   return (
     <div className="w-full">
@@ -59,6 +80,8 @@ const ImageComparison: React.FC<ImageComparisonProps> = ({ originalImage, proces
             alt="Original" 
             className="object-cover w-full h-full"
             style={{ maxWidth: 'none', width: `${100 / (sliderPosition / 100)}%` }}
+            onLoad={handleImagesLoaded}
+            onError={handleImageError}
           />
           <div className="absolute top-4 left-4 bg-black bg-opacity-50 text-white px-2 py-1 rounded text-sm">
             Original
@@ -71,6 +94,8 @@ const ImageComparison: React.FC<ImageComparisonProps> = ({ originalImage, proces
           alt="Enhanced" 
           className="block w-full object-cover"
           style={{ maxHeight: '500px' }}
+          onLoad={handleImagesLoaded}
+          onError={handleImageError}
         />
         <div className="absolute top-4 right-4 bg-black bg-opacity-50 text-white px-2 py-1 rounded text-sm">
           Enhanced

@@ -38,12 +38,12 @@ const Blog = () => {
       <Header />
       
       <main className="flex-1 container mx-auto px-4 py-8">
-        <div className="text-center mb-12">
-          <h1 className="text-4xl md:text-5xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-600 to-blue-500 mb-4">
+        <div className="text-center mb-8 md:mb-12">
+          <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-600 to-blue-500 mb-4">
             Blog & Resources
           </h1>
-          <p className="text-lg text-slate-600 dark:text-slate-300 max-w-2xl mx-auto">
-            Stay updated with the latest trends, tutorials, and insights about image enhancement and AI technology
+          <p className="text-lg md:text-xl text-slate-600 dark:text-slate-300 max-w-2xl mx-auto">
+            Explore expert tips on AI image enhancement, resolution upscaling, and visual clarity. Learn how our technology helps bring every pixel to life.
           </p>
         </div>
 

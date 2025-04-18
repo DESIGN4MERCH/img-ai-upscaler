@@ -31,12 +31,12 @@ const ProcessingOptions: React.FC<ProcessingOptionsProps> = ({
   return (
     <div className="space-y-6">
       <div>
-        <h3 className="font-medium mb-3">Scale Factor</h3>
+        <h3 className="font-medium mb-3 text-gray-800 dark:text-gray-200">Scale Factor</h3>
         <ToggleGroup 
           type="single" 
           value={scale.toString()} 
           onValueChange={(value) => value && setScale(parseInt(value))}
-          className="grid grid-cols-4 w-full gap-2"
+          className="grid grid-cols-2 sm:grid-cols-4 w-full gap-2"
           disabled={isProcessing}
         >
           {scaleValues.map((value) => (
@@ -46,7 +46,7 @@ const ProcessingOptions: React.FC<ProcessingOptionsProps> = ({
               className={
                 scale === value 
                   ? "bg-gradient-to-r from-purple-600 to-blue-500 hover:from-purple-700 hover:to-blue-600 text-white font-bold"
-                  : "border-purple-200 bg-white dark:bg-gray-800 hover:bg-purple-50 dark:hover:bg-gray-700"
+                  : "border-purple-200 bg-white dark:bg-gray-800 dark:border-gray-700 hover:bg-purple-50 dark:hover:bg-gray-700 dark:text-gray-200"
               }
               disabled={isProcessing}
             >
@@ -59,7 +59,7 @@ const ProcessingOptions: React.FC<ProcessingOptionsProps> = ({
       </div>
 
       <div>
-        <h3 className="font-medium mb-3">Enhancement Mode</h3>
+        <h3 className="font-medium mb-3 text-gray-800 dark:text-gray-200">Enhancement Mode</h3>
         <RadioGroup
           value={enhancementType}
           onValueChange={setEnhancementType}
@@ -68,19 +68,19 @@ const ProcessingOptions: React.FC<ProcessingOptionsProps> = ({
         >
           <div className="flex items-center space-x-2">
             <RadioGroupItem value="default" id="default" />
-            <Label htmlFor="default" className="cursor-pointer">Default</Label>
+            <Label htmlFor="default" className="cursor-pointer text-gray-700 dark:text-gray-300">Default</Label>
           </div>
           <div className="flex items-center space-x-2">
             <RadioGroupItem value="denoise" id="denoise" />
-            <Label htmlFor="denoise" className="cursor-pointer">Reduce Noise</Label>
+            <Label htmlFor="denoise" className="cursor-pointer text-gray-700 dark:text-gray-300">Reduce Noise</Label>
           </div>
           <div className="flex items-center space-x-2">
             <RadioGroupItem value="enhance" id="enhance" />
-            <Label htmlFor="enhance" className="cursor-pointer">Enhance Details</Label>
+            <Label htmlFor="enhance" className="cursor-pointer text-gray-700 dark:text-gray-300">Enhance Details</Label>
           </div>
           <div className="flex items-center space-x-2">
             <RadioGroupItem value="sharpen" id="sharpen" />
-            <Label htmlFor="sharpen" className="cursor-pointer">Sharpen</Label>
+            <Label htmlFor="sharpen" className="cursor-pointer text-gray-700 dark:text-gray-300">Sharpen</Label>
           </div>
         </RadioGroup>
       </div>
@@ -100,7 +100,7 @@ const ProcessingOptions: React.FC<ProcessingOptionsProps> = ({
         )}
       </Button>
       
-      <div className="text-xs text-gray-500 mt-4">
+      <div className="text-xs text-gray-500 dark:text-gray-400 mt-4">
         <p>Powered by advanced AI technology</p>
       </div>
     </div>

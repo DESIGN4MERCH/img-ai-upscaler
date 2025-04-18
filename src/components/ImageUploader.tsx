@@ -80,7 +80,7 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({ onImageUpload, fileInputR
   return (
     <div 
       className={`w-full min-h-[300px] flex flex-col items-center justify-center rounded-lg border-2 border-dashed transition-colors ${
-        isDragging ? 'border-purple-500 bg-purple-50' : 'border-gray-300 hover:border-purple-400'
+        isDragging ? 'border-purple-500 bg-purple-50 dark:bg-purple-900/20' : 'border-gray-300 hover:border-purple-400 dark:border-gray-600 dark:hover:border-purple-500'
       } p-6`}
       onDragOver={handleDragOver}
       onDragLeave={handleDragLeave}
@@ -108,7 +108,7 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({ onImageUpload, fileInputR
           <div className="mt-4 flex justify-center">
             <Button 
               variant="outline"
-              className="bg-white"
+              className="bg-white dark:bg-gray-800 dark:text-white dark:hover:bg-gray-700"
               onClick={handleButtonClick}
             >
               <Upload className="mr-2 h-4 w-4" />
@@ -118,23 +118,23 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({ onImageUpload, fileInputR
         </div>
       ) : (
         <>
-          <div className="w-16 h-16 mb-4 rounded-full bg-purple-100 flex items-center justify-center">
-            <ImageIcon className="w-8 h-8 text-purple-500" />
+          <div className="w-16 h-16 mb-4 rounded-full bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center">
+            <ImageIcon className="w-8 h-8 text-purple-500 dark:text-purple-400" />
           </div>
-          <h3 className="text-lg font-medium text-gray-900 mb-2">Upload your image</h3>
-          <p className="text-sm text-gray-500 mb-4 text-center">
+          <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-2">Upload your image</h3>
+          <p className="text-sm text-gray-500 dark:text-gray-400 mb-4 text-center">
             Drag and drop your image here, or click to browse<br />
             You can also paste an image directly
           </p>
           <Button 
             variant="outline" 
-            className="bg-white"
+            className="bg-white dark:bg-gray-800 dark:text-white dark:hover:bg-gray-700"
             onClick={handleButtonClick}
           >
             <Upload className="mr-2 h-4 w-4" />
             Select Image
           </Button>
-          <p className="mt-2 text-xs text-gray-500">
+          <p className="mt-2 text-xs text-gray-500 dark:text-gray-400">
             Supported formats: JPG, PNG, WEBP (Max: 10MB)
           </p>
         </>

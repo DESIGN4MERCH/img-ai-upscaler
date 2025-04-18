@@ -38,12 +38,12 @@ const ImageProcessingSection = ({
   const fileInputRef = useRef<HTMLInputElement>(null);
   
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-16">
-      <Card className="col-span-1 lg:col-span-2 p-6 shadow-lg border border-slate-200">
+    <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-8 mb-16">
+      <Card className="col-span-1 lg:col-span-2 p-4 md:p-6 shadow-lg border border-slate-200 dark:border-slate-700 dark:bg-gray-800">
         <Tabs defaultValue="upload" className="w-full">
-          <TabsList className="grid w-full grid-cols-2 mb-8">
-            <TabsTrigger value="upload">Upload Image</TabsTrigger>
-            <TabsTrigger value="result" disabled={!processedImage}>Results</TabsTrigger>
+          <TabsList className="grid w-full grid-cols-2 mb-6 md:mb-8">
+            <TabsTrigger value="upload" className="dark:text-gray-200 dark:data-[state=active]:text-white">Upload Image</TabsTrigger>
+            <TabsTrigger value="result" disabled={!processedImage} className="dark:text-gray-200 dark:data-[state=active]:text-white">Results</TabsTrigger>
           </TabsList>
           
           <TabsContent value="upload" className="mt-0">
@@ -55,7 +55,8 @@ const ImageProcessingSection = ({
           </TabsContent>
           
           <TabsContent value="result" className="mt-0">
-            {processedImage ? <div className="flex flex-col items-center">
+            {processedImage ? (
+              <div className="flex flex-col items-center">
                 <ImageComparison originalImage={originalImage!} processedImage={processedImage} />
                 <Button 
                   className="mt-6 bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white py-2 px-8 transform transition-all duration-300 hover:scale-105 shadow-md" 
@@ -64,15 +65,18 @@ const ImageProcessingSection = ({
                   <Download className="mr-2 h-4 w-4" />
                   Download Image
                 </Button>
-              </div> : <div className="text-center py-20">
-                <p className="text-slate-500">Process an image to see results</p>
-              </div>}
+              </div>
+            ) : (
+              <div className="text-center py-20">
+                <p className="text-slate-500 dark:text-slate-400">Process an image to see results</p>
+              </div>
+            )}
           </TabsContent>
         </Tabs>
       </Card>
 
-      <Card className="p-6 shadow-lg border border-slate-200">
-        <h2 className="text-xl font-semibold mb-6">Enhancement Options</h2>
+      <Card className="p-4 md:p-6 shadow-lg border border-slate-200 dark:border-slate-700 dark:bg-gray-800">
+        <h2 className="text-xl font-semibold mb-6 text-gray-800 dark:text-white">Enhancement Options</h2>
         <ProcessingOptions 
           scale={scale} 
           setScale={setScale} 
